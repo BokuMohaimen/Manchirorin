@@ -28,9 +28,10 @@ public final class Manchirorin extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
     }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("mch")){
+        if (command.getName().equalsIgnoreCase("mch")) {
             if (args.length == 0) {
                 sender.sendMessage("§f==========" + prefix + "§f==========");
                 sender.sendMessage("§a§l/mch new §e§l[金額] §r: §f§l親としてマンチロを開始します");
@@ -49,19 +50,42 @@ public final class Manchirorin extends JavaPlugin {
                 sender.sendMessage("§ejackpotの払い出し金額: 賭け金x10 or jackpotすべて のどちらか金額が低いほう");
                 return true;
             }
+            //new マンチロのゲームを開始↓
             if (args[0].equals("new")) {
-                if (mch){
-                    sender.sendMessage(prefix+"現在マンチロが開始されています！");
+                if (mch = true) {
+                    sender.sendMessage(prefix + " 現在マンチロが開始されています");
+                    return true;
+                }
+                double bit = -1;
+                int max = -1;
+                try {
+                    bit = Double.parseDouble(args[1]);
+                    max = Integer.parseInt(args[2]);
+                } catch (NumberFormatException e) {
+                    sender.sendMessage(prefix + " §c数字で入力してください");
+                    return true;
+                }
+                if (bit < 100000) {
+                    sender.sendMessage(prefix + " 掛け金は10万円以上で入力してください");
                     return true;
                 }
                 return true;
+                //join マンチロのゲームに参加↓
+                if (args[0].equals("join")) {
+                    if (mch = false) {
+                        sender.sendMessage(prefix + " 現在マンチロは開催されていません");
+                        return true;
+                    } else if (max <= 0 || max >= 11) {
+                        sender.sendMessage(prefix + " 募集人数は1人以上10人未満で入力してください");
+                        return true;
+                    }
+                } else{
+                    sender.sendMessage(prefix + " 使い方が間違っています");
+                    sender.sendMessage(prefix + " /mch と入力するとコマンド一覧が見れます");
+                    return true;
+                }
             }
-            else {
-                sender.sendMessage(prefix +" 使い方が間違っています");
-                sender.sendMessage(prefix +" /mch と入力するとコマンド一覧が見れます");
-                return true;
-            }
+            return true;
         }
-     return true;
     }
 }
