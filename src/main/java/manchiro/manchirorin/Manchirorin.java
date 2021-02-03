@@ -79,13 +79,13 @@ public final class Manchirorin extends JavaPlugin {
                         sender.sendMessage(prefix + " 募集人数は1人以上10人未満で入力してください");
                         return true;
                     }
-                } else{
+                } else {
                     sender.sendMessage(prefix + " 使い方が間違っています");
                     sender.sendMessage(prefix + " /mch と入力するとコマンド一覧が見れます");
                     return true;
                 }
             }
             return true;
-        }
+        } return true;
     }
 }
