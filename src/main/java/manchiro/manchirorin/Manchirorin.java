@@ -63,7 +63,7 @@ public final class Manchirorin extends JavaPlugin {
             //new マンチロのゲームを開始↓
             if (args[0].equals("new")) {
                 if (args.length != 3) {
-                    p.sendMessage(prefix + "引数の数が違っています");
+                    p.sendMessage(prefix + " 引数の数が違っています");
                     return true;
                 }
                 if (mch = true) {
@@ -79,11 +79,11 @@ public final class Manchirorin extends JavaPlugin {
                     return true;
                 }
                 if (vault.getBalance(p.getUniqueId()) < bet * 5) {
-                    p.sendMessage(prefix + "§c必要金額に持っていません" + "§r" + bet * 5 + "円");
+                    p.sendMessage(prefix + " §c必要金額に持っていません" + "§r" + bet * 5 + "円");
                     return true;
                 }
-                Bukkit.broadcastMessage(prefix + sender.getName() + "が§e§l" + bet + "円§lの§d§lマ§a§lン§f§lチロ§r§lを募集しました！");
-                Bukkit.broadcastMessage(prefix + "§l募集人数:§e§l " + hito + "人");
+                Bukkit.broadcastMessage(prefix + " " + sender.getName() + "が§e§l" + bet + "円§lの§d§lマ§a§lン§f§lチロ§r§lを募集しました！");
+                Bukkit.broadcastMessage(prefix + " §l募集人数:§e§l " + hito + "人");
                 return true;
                 //join マンチロのゲームに参加↓
             } else if (args[0].equals("join")) {
