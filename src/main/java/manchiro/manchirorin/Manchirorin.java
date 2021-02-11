@@ -38,8 +38,6 @@ public final class Manchirorin extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player p = (Player) sender;
-        int bet = Integer.parseInt(args[1]);
-        int hito = Integer.parseInt(args[2]);
         if (command.getName().equalsIgnoreCase("mch")) {
             if (args.length == 0) {
                 p.sendMessage("§f==========" + prefix + "§f==========");
@@ -62,6 +60,8 @@ public final class Manchirorin extends JavaPlugin {
             }
             //new マンチロのゲームを開始↓
             if (args[0].equals("new")) {
+                int bet = Integer.parseInt(args[1]);
+                int hito = Integer.parseInt(args[2]);
                 if (args.length != 3) {
                     p.sendMessage(prefix + " 引数の数が違っています");
                     return true;
@@ -87,6 +87,8 @@ public final class Manchirorin extends JavaPlugin {
                 return true;
                 //join マンチロのゲームに参加↓
             } else if (args[0].equals("join")) {
+                int bet = Integer.parseInt(args[1]);
+                int hito = Integer.parseInt(args[2]);
                     if (mch = false) {
                         p.sendMessage(prefix + " 現在マンチロは開催されていません");
                         return true;
@@ -94,12 +96,15 @@ public final class Manchirorin extends JavaPlugin {
                         p.sendMessage(prefix + " 募集人数は1人以上10人未満で入力してください");
                         return true;
                     }
-                } else {
+            } else if (args[0].equals("off")) {
+                p.sendMessage(prefix + "オフにしました");
+                mch = false;
+                return true;
+            } else {
                     p.sendMessage(prefix + " 使い方が間違っています");
                     p.sendMessage(prefix + " /mch と入力するとコマンド一覧が見れます");
                     return true;
             }
-        }
-        return true;
+        } return true;
     }
 }
