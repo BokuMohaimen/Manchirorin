@@ -57,8 +57,6 @@ public final class Manchirorin extends JavaPlugin {
             }
             //new マンチロのゲームを開始↓
             if (args[0].equals("new")) {
-                int bet = Integer.parseInt(args[1]);
-                int hito = Integer.parseInt(args[2]);
                 if (args.length != 3) {
                     p.sendMessage(prefix + " 引数の数が違っています");
                     return true;
@@ -75,12 +73,18 @@ public final class Manchirorin extends JavaPlugin {
                     p.sendMessage(prefix + "§c人数を数字で入力してください");
                     return true;
                 }
-                if (vault.getBalance(p.getUniqueId()) < bet * 5) {
-                    p.sendMessage(prefix + " §c必要金額に持っていません" + "§r" + bet * 5 + "円");
+                long bet = Long.parseLong(args[1]);
+                int hito = Integer.parseInt(args[2]);
+                if (vault.getBalance(p.getUniqueId()) < bet * hito * 5) {
+                    if (hito <= 0 || hito >= 11) {
+                        p.sendMessage(prefix + " 募集人数は1人以上10人以下で入力してください");
+                        return true;
+                    }
+                    p.sendMessage(prefix + " §c必要金額に持っていません" + "§r" + bet * 5 * hito + "円");
                     return true;
                 }
                 if (hito <= 0 || hito >= 11) {
-                    p.sendMessage(prefix + " 募集人数は1人以上10人未満で入力してください");
+                    p.sendMessage(prefix + " 募集人数は1人以上10人以下で入力してください");
                     return true;
                 }
                 Bukkit.broadcastMessage(prefix + " " + sender.getName() + "が§e§l" + bet + "円§lの§d§lマ§a§lン§f§lチロ§r§lを募集しました！");
