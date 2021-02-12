@@ -14,6 +14,7 @@ import static jdk.nashorn.internal.runtime.JSType.isNumber;
 public final class Manchirorin extends JavaPlugin {
 
     boolean mch = false;
+    boolean game = false;
     private List<Player> list;
     private VaultManager vault;
     String prefix = "§f[§d§lマ§a§lン§f§lチロ§r]";
@@ -63,7 +64,7 @@ public final class Manchirorin extends JavaPlugin {
                     p.sendMessage(prefix + " 引数の数が違っています");
                     return true;
                 }
-                if (mch) {
+                if (game) {
                     p.sendMessage(prefix + " 現在マンチロが開始されています");
                     return true;
                 }
@@ -91,7 +92,7 @@ public final class Manchirorin extends JavaPlugin {
                 return true;
                 //join マンチロのゲームに参加↓
             } if (args[0].equals("join")) {
-                    if (!mch) {
+                    if (!game) {
                         p.sendMessage(prefix + " 現在マンチロは開催されていません");
                         return true;
                     }
