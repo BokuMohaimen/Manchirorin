@@ -17,12 +17,14 @@ public final class Manchirorin extends JavaPlugin {
     private List<Player> list;
     private VaultManager vault;
     String prefix = "§f[§d§lマ§a§lン§f§lチロ§r]";
-    int jp;
+    double jp;
+    double bet;
+    int hito;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
-        getLogger().info("起動しました。");
+        getLogger().info("起動しました");
         list = new ArrayList<>();
         vault = new VaultManager(this);
     }
@@ -65,26 +67,23 @@ public final class Manchirorin extends JavaPlugin {
                     p.sendMessage(prefix + " 現在マンチロが開始されています");
                     return true;
                 }
-                if (!isNumber(args[1])) {
-                    p.sendMessage(prefix + " §c金額を数字で入力してください");
+                try {
+                    bet = Double.parseDouble(args[1]);
+                    hito = Integer.parseInt(args[2]);
+                }catch (NumberFormatException e) {
+                    p.sendMessage(prefix + " §c金額と人数は数字で入力してください");
                     return true;
                 }
-                if (!isNumber(args[2])) {
-                    p.sendMessage(prefix + "§c人数を数字で入力してください");
-                    return true;
-                }
-                long bet = Long.parseLong(args[1]);
-                int hito = Integer.parseInt(args[2]);
                 if (vault.getBalance(p.getUniqueId()) < bet * hito * 5) {
                     if (hito <= 0 || hito >= 11) {
                         p.sendMessage(prefix + " 募集人数は1人以上10人以下で入力してください");
                         return true;
                     }
-                    p.sendMessage(prefix + " §c必要金額に持っていません" + "§r" + bet * 5 * hito + "円");
+                    p.sendMessage(prefix + " §c必要金額を持っていません §r必要金額: " + "§r" + bet * 5 * hito + "円");
                     return true;
                 }
                 if (hito <= 0 || hito >= 11) {
-                    p.sendMessage(prefix + " 募集人数は1人以上10人以下で入力してください");
+                    p.sendMessage(prefix + " §c募集人数は1人以上10人以下で入力してください");
                     return true;
                 }
                 Bukkit.broadcastMessage(prefix + " " + sender.getName() + "が§e§l" + bet + "円§lの§d§lマ§a§lン§f§lチロ§r§lを募集しました！");
@@ -96,14 +95,25 @@ public final class Manchirorin extends JavaPlugin {
                         p.sendMessage(prefix + " 現在マンチロは開催されていません");
                         return true;
                     }
+                    if (list.contains((Player) p)) {
+                        p.sendMessage(prefix + " §cあなたは既に参加しています");
+                        return true;
+                    }
+                    if (vault.getBalance(p.getUniqueId()) < bet * 5 ) {
+                        p.sendMessage(prefix + " §c所持金が足りません §r必要金額: " + bet * 5 + "円");
+                    }
                     return true;
             } if (args[0].equals("off")) {
+                if (!p.hasPermission("manchiro.op")) {
+                    p.sendMessage(prefix + " §cあなたには権限がありません");
+                    return true;
+                }
                 if (mch) {
-                    p.sendMessage(prefix + "オフにしました");
+                    p.sendMessage(prefix + " オフにしました");
                     mch = false;
                     return true;
                 } else {
-                    p.sendMessage(prefix + "既にオフになっています");
+                    p.sendMessage(prefix + " 既にオフになっています");
                     return true;
                 }
             } else {
