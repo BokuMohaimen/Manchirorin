@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static jdk.nashorn.internal.runtime.JSType.isNumber;
 
@@ -15,7 +16,7 @@ public final class Manchirorin extends JavaPlugin {
 
     boolean mch = false;
     boolean game = false;
-    private List<Player> list;
+    private List<Player> kolist;
     private VaultManager vault;
     String prefix = "§f[§d§lマ§a§lン§f§lチロ§r]";
     double jp;
@@ -26,7 +27,7 @@ public final class Manchirorin extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getLogger().info("起動しました");
-        list = new ArrayList<>();
+        kolist = new ArrayList<>();
         vault = new VaultManager(this);
     }
 
@@ -96,13 +97,15 @@ public final class Manchirorin extends JavaPlugin {
                         p.sendMessage(prefix + " 現在マンチロは開催されていません");
                         return true;
                     }
-                    if (list.contains((Player) p)) {
+                    if (kolist.contains(p)) {
                         p.sendMessage(prefix + " §cあなたは既に参加しています");
                         return true;
                     }
                     if (vault.getBalance(p.getUniqueId()) < bet * 5 ) {
                         p.sendMessage(prefix + " §c所持金が足りません §r必要金額: " + bet * 5 + "円");
                     }
+                    kolist.add(p.getPlayer());
+                    Bukkit.broadcastMessage(p.getDisplayName() + "さんがマンチロに参加しました！");
                     return true;
             } if (args[0].equals("off")) {
                 if (!p.hasPermission("manchiro.op")) {
