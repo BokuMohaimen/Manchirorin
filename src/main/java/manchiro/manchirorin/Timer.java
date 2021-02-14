@@ -19,7 +19,7 @@ public class Timer {
                     cancel();
                     return;
                 }
-                if(plugin.joinplayers.size() == plugin.hito) {
+                if(plugin.kolist.size() == plugin.hito) {
                     time = 0;
                     cancel();
                     return;
