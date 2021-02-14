@@ -30,8 +30,8 @@ public class MCHData {
     }
 
     public static void reset(){
-        for(Player player:plugin.kolist){
-            plugin.totalBet.transferBalanceToPlayer(uuid,plugin.bet*5,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr cancel: "+Bukkit.getPlayer(uuid).getName());
+        for(Player p:plugin.kolist){
+            plugin.totalBet.transferBalanceToPlayer(p,plugin.bet*5,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr cancel: "+Bukkit.getPlayer(uuid).getName());
         }
         plugin.kolist.clear();
         plugin.bet = -1;
@@ -150,7 +150,7 @@ public class MCHData {
         new BukkitRunnable(){
             @Override
             public void run() {
-                if(plugin.joinplayers.size()==0){
+                if(plugin.kolist.size()==0){
                     cancel();
                     if(!plugin.gametime){
                         return;
@@ -162,15 +162,15 @@ public class MCHData {
                     return;
                 }
                 if(!jackskip) {
-                    UUID uuid = plugin.joinplayers.get(0);
-                    childbattle(uuid);
+                    Player p = plugin.kolist.get(0);
+                    childbattle(p);
                 }
             }
         }.runTaskTimer(plugin,20,120);
     }
 
-    public static void childbattle(UUID uuid){
-        sendKankeisya("§c§l"+Bukkit.getPlayer(uuid).getDisplayName()+"§f§lさん(子)がサイコロを振っています…§e§l§kaaa");
+    public static void childbattle(Player p){
+        sendKankeisya("§c§l"+Bukkit.getPlayer(p).getDisplayName()+"§f§lさん(子)がサイコロを振っています…§e§l§kaaa");
         new BukkitRunnable(){
             @Override
             public void run() {
@@ -359,8 +359,8 @@ public class MCHData {
     }
 
     public static void sendKankeisya(String message){
-        for(UUID uuid:plugin.joinplayers){
-            Bukkit.getPlayer(uuid).sendMessage(plugin.prefix+message);
+        for(Player p:plugin.kolist){
+            p.sendMessage(plugin.prefix+message);
         }
         Bukkit.getPlayer(plugin.parent).sendMessage(plugin.prefix+message);
     }
@@ -368,11 +368,11 @@ public class MCHData {
     public static void gotoJackpot(){
         Bukkit.broadcastMessage(plugin.prefix+"§e§l結果: §4§l全 員 敗 北");
         double with = plugin.bet * 5;
-        for(UUID uuid:plugin.joinplayers){
-            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+Bukkit.getPlayer(uuid).getDisplayName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5).getString()+"円 → "+new JPYBalanceFormat(0).getString()+"円§e(全額手数料"+new JPYBalanceFormat(with).getString()+"円)");
+        for(Player p:plugin.kolist){
+            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+Bukkit.getPlayer(p).getDisplayName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5).getString()+"円 → "+new JPYBalanceFormat(0).getString()+"円§e(全額手数料"+new JPYBalanceFormat(with).getString()+"円)");
             plugin.addJackpot(with);
         }
-        plugin.joinplayers.clear();
+        plugin.kolist.clear();
         Bukkit.broadcastMessage(plugin.prefix+"§a§l"+Bukkit.getPlayer(plugin.parent).getDisplayName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5*plugin.maxplayers).getString()+"円 → "+new JPYBalanceFormat(0).getString()+"円§e(全額手数料"+new JPYBalanceFormat(plugin.parentbal).getString()+"円)");
         plugin.addJackpot(plugin.parentbal);
         plugin.parentbal = 0;
