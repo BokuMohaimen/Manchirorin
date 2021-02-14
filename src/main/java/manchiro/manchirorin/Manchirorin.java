@@ -103,6 +103,7 @@ public final class Manchirorin extends JavaPlugin {
                     }
                     if (vault.getBalance(p.getUniqueId()) < bet * 5 ) {
                         p.sendMessage(prefix + " §c所持金が足りません §r必要金額: " + bet * 5 + "円");
+                        return true;
                     }
                     kolist.add(p.getPlayer());
                     Bukkit.broadcastMessage(p.getDisplayName() + "さんがマンチロに参加しました！");
