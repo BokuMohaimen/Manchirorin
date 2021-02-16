@@ -3,7 +3,10 @@ package manchiro.manchirorin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -22,6 +25,13 @@ public final class Manchirorin extends JavaPlugin {
     double jp;
     double bet;
     int hito;
+    double oyabal;
+    double jackpot;
+    int oyayaku;
+    Player oya;
+    Timer timer;
+
+    FileConfiguration config;
 
     @Override
     public void onEnable() {
@@ -29,6 +39,7 @@ public final class Manchirorin extends JavaPlugin {
         getLogger().info("起動しました");
         kolist = new ArrayList<>();
         vault = new VaultManager(this);
+        timer = new Timer(this);
     }
 
     @Override
@@ -88,8 +99,7 @@ public final class Manchirorin extends JavaPlugin {
                     p.sendMessage(prefix + " §c募集人数は1人以上10人以下で入力してください");
                     return true;
                 }
-                Bukkit.broadcastMessage(prefix + " " + sender.getName() + "が§e§l" + bet + "円§lの§d§lマ§a§lン§f§lチロ§r§lを募集しました！");
-                Bukkit.broadcastMessage(prefix + " §l募集人数:§e§l " + hito + "人");
+                MCHData.gameStart(p,bet,hito);
                 return true;
                 //join マンチロのゲームに参加↓
             } if (args[0].equals("join")) {
@@ -127,5 +137,31 @@ public final class Manchirorin extends JavaPlugin {
                     return true;
             }
         } return true;
+    }
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e){
+        Player p = e.getPlayer();
+        if(oya == p){
+            Bukkit.broadcastMessage(prefix+"§4§l親("+p.getDisplayName()+"§4§l)がサーバーから退出したためキャンセルします");
+            MCHData.cancel();
+        }else if(kolist.contains(p)){
+            Bukkit.broadcastMessage(prefix+"§4§l子("+p.getDisplayName()+"§4§l)がサーバーから退出したためキャンセルします");
+            MCHData.cancel();
+        }
+    }
+    public double getJackpot(){
+        return jackpot;
+    }
+
+    public void addJackpot(Double d){
+        config.set("jackpot",jackpot+d);
+        saveConfig();
+        jackpot = jackpot + d;
+    }
+
+    public void takeJackpot(Double d){
+        config.set("jackpot",jackpot-d);
+        saveConfig();
+        jackpot = jackpot - d;
     }
 }
