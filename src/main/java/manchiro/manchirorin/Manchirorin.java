@@ -22,7 +22,6 @@ public final class Manchirorin extends JavaPlugin {
     List<Player> kolist;
     private VaultManager vault;
     String prefix = "§f[§d§lマ§a§lン§f§lチロ§r]";
-    double jp;
     double bet;
     int hito;
     double oyabal;
@@ -40,6 +39,9 @@ public final class Manchirorin extends JavaPlugin {
         kolist = new ArrayList<>();
         vault = new VaultManager(this);
         timer = new Timer(this);
+        saveDefaultConfig();
+        config = getConfig();
+        jackpot = config.getDouble("jackpot");
     }
 
     @Override

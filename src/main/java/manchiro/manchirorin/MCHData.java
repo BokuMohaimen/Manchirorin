@@ -58,7 +58,7 @@ public class MCHData {
     public static void gamePush1(){
         plugin.gametime = true;
         Bukkit.broadcastMessage(plugin.prefix+"§a§lマンチロがスタートしました！");
-        sendKankeisya("§a§l"+Bukkit.getPlayer(plugin.parent).getDisplayName()+"§f§lさん(親)がサイコロを振っています…§e§l§kaaa");
+        sendKankeisya("§a§l"+Bukkit.getPlayer(plugin.oya).getDisplayName()+"§f§lさん(親)がサイコロを振っています…§e§l§kaaa");
         new BukkitRunnable(){
             @Override
             public void run() {
