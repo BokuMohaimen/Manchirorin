@@ -5,6 +5,7 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -57,10 +58,10 @@ public class VaultManager {
     /////////////////////////////////////
     //      引き出し
     /////////////////////////////////////
-    public Boolean withdraw(UUID uuid, double money){
-        OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
+    public Boolean withdraw(Player player, double money){
+        OfflinePlayer p = Bukkit.getOfflinePlayer(player.getUniqueId());
         if(p == null){
-            Bukkit.getLogger().info(uuid.toString()+"は見つからない");
+            Bukkit.getLogger().info(player.toString()+"は見つからない");
             return false;
         }
         EconomyResponse resp = economy.withdrawPlayer(p,money);
@@ -75,11 +76,10 @@ public class VaultManager {
     /////////////////////////////////////
     //      お金を入れる
     /////////////////////////////////////
-    public Boolean deposit(UUID uuid,double money){
-        OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
+    public Boolean deposit(Player player, double money){
+        OfflinePlayer p = Bukkit.getOfflinePlayer(player.getUniqueId());
         if(p == null){
-            Bukkit.getLogger().info(uuid.toString()+"は見つからない");
-
+            Bukkit.getLogger().info(player.toString()+"は見つからない");
             return false;
         }
         EconomyResponse resp = economy.depositPlayer(p,money);

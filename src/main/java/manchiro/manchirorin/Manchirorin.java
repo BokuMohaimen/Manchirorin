@@ -128,6 +128,9 @@ public final class Manchirorin extends JavaPlugin {
                     }
                     kolist.add(p.getPlayer());
                     Bukkit.broadcastMessage(p.getDisplayName() + "さんがマンチロに参加しました！");
+                    if (kolist.size() == hito) {
+                        MCHData.gamePush1();
+                    }
                     return true;
             } if (args[0].equals("off")) {
                 if (!p.hasPermission("manchiro.op")) {

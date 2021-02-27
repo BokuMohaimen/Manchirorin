@@ -31,7 +31,8 @@ public class MCHData {
 
     public static void reset(){
         for(Player p:plugin.kolist){
-            plugin.totalBet.transferBalanceToPlayer(p,plugin.bet*5,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr cancel: "+Bukkit.getPlayer(uuid).getName());
+            plugin.vault.deposit(p.getPlayer(), plugin.bet*5);
+            //plugin.totalBet.transferBalanceToPlayer(p,plugin.bet*5,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr cancel: "+Bukkit.getPlayer(uuid).getName());
         }
         plugin.kolist.clear();
         plugin.bet = -1;
@@ -46,11 +47,13 @@ public class MCHData {
     }
 
     public static void timeEnd(){
+        plugin.vault.deposit(plugin.oya ,plugin.oyabal);
         Bukkit.broadcastMessage(plugin.prefix+"§4§l子が集まらなかったため中止しました。");
         reset();
     }
 
     public static void cancel(){
+        plugin.vault.deposit(plugin.oya ,plugin.oyabal);
         Bukkit.broadcastMessage(plugin.prefix+"§4§lキャンセルされました。");
         reset();
     }
@@ -121,10 +124,12 @@ public class MCHData {
                         jack = plugin.bet * 10;
                     }
                     plugin.takeJackpot(jack);
-                    plugin.vault.givePlayerMoney(plugin.parent,jack,TransactionType.DEPOSIT,"mcr jackpot!! user: "+Bukkit.getPlayer(plugin.parent).getName());
+                    plugin.vault.deposit(plugin.oya, jack);
+                    //plugin.vault.givePlayerMoney(plugin.parent,jack,TransactionType.DEPOSIT,"mcr jackpot!! user: "+Bukkit.getPlayer(plugin.parent).getName());
                     sendTitle("§0§l§kaaaaa§4§lJ§6§lA§e§lC§a§lK§2§lP§b§lO§3§lT§0§l§kaaaaa","§e§l当選者: §f§l"+Bukkit.getPlayer(plugin.parent).getName()+" §6§l当選金額: §f§l"+new JPYBalanceFormat(jack).getString()+"円",100);
-                    plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),plugin.parent,plugin.parentbal,TransactionCategory.GAMBLE,TransactionType.WIN,"mcr jackpot!! user: "+Bukkit.getPlayer(plugin.parent).getName());
-                    Bukkit.broadcastMessage(plugin.prefix+"§a§l"+Bukkit.getPlayer(plugin.parent).getDisplayName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5*plugin.maxplayers).getString()+"円 → "+new JPYBalanceFormat(plugin.parentbal + jack).getString()+"円");
+                    plugin.vault.deposit(plugin.oya, plugin.oyabal);
+                    //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),plugin.parent,plugin.parentbal,TransactionCategory.GAMBLE,TransactionType.WIN,"mcr jackpot!! user: "+Bukkit.getPlayer(plugin.parent).getName());
+                    Bukkit.broadcastMessage(plugin.prefix+"§a§l"+plugin.oya.getDisplayName()+"§f§l: §e§l"+plugin.bet*5*plugin.hito+" 円 → "+plugin.oyabal + jack+" 円");
                     reset();
                 }else if(result.equalsIgnoreCase("サイコー")){
                     sendKankeisya("§a§l§nサイコー (ﾟ∀ﾟ)ｷﾀｺﾚ!!");
@@ -155,8 +160,9 @@ public class MCHData {
                     if(!plugin.game){
                         return;
                     }
-                    plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),plugin.parent,plugin.parentbal - (plugin.parentbal/100),TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr parent deposit: "+Bukkit.getPlayer(plugin.parent).getName());
-                    Bukkit.broadcastMessage(plugin.prefix+"§a§l"+plugin.oya.getDisplayName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5*plugin.maxplayers).getString()+"円 → "+new JPYBalanceFormat(plugin.parentbal).getString()+"円§e(うち手数料"+new JPYBalanceFormat((plugin.parentbal/100)).getString()+"円)");
+                    plugin.vault.deposit(plugin.oya, plugin.oyabal - (plugin.oyabal/100));
+                    //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),plugin.parent,plugin.parentbal - (plugin.parentbal/100),TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr parent deposit: "+Bukkit.getPlayer(plugin.parent).getName());
+                    Bukkit.broadcastMessage(plugin.prefix+"§a§l"+plugin.oya.getDisplayName()+"§f§l: §e§l"+plugin.bet*5*plugin.hito+" 円 → "+plugin.oyabal+" 円§e(うち手数料"+plugin.oyabal/100+" 円)");
                     plugin.addJackpot(plugin.oyabal/100);
                     reset();
                     return;
@@ -189,73 +195,73 @@ public class MCHData {
                 if(result.equalsIgnoreCase("ナシ")){
                     sendKankeisya("§a§l役無し (ﾟ∀ﾟ)ｷﾀｺﾚ!!");
                     if(plugin.oyayaku == 0){
-                        draw(uuid);
+                        draw(p);
                     }else {
-                        vsOya(true,uuid,1.0);
+                        vsOya(true,p,1.0);
                     }
                 }else if(result.equalsIgnoreCase("dan5")){
                     sendKankeisya("§6§lダンゴ ｷﾀ━━━━(ﾟ∀ﾟ)━━━━!!");
-                    vsOya(true,uuid,2.0);
+                    vsOya(true,p,2.0);
                 }else if(result.equalsIgnoreCase("イチ")){
                     sendKankeisya("§e§lイチ (ﾟ∀ﾟ)ｷﾀｺﾚ!!");
                     if(plugin.oyayaku == 1){
-                        draw(uuid);
+                        draw(p);
                     }else if(plugin.oyayaku > 1){
-                        vsOya(true,uuid,1.0);
+                        vsOya(true,p,1.0);
                     }else {
-                        vsOya(false,uuid,1.0);
+                        vsOya(false,p,1.0);
                     }
                 }else if(result.equalsIgnoreCase("ニ")){
                     sendKankeisya("§f§lニが役に決まりました！");
                     if(plugin.oyayaku == 2){
-                        draw(uuid);
+                        draw(p);
                     }else if(plugin.oyayaku > 2){
-                        vsOya(true,uuid,1.0);
+                        vsOya(true,p,1.0);
                     }else {
-                        vsOya(false,uuid,1.0);
+                        vsOya(false,p,1.0);
                     }
                 }else if(result.equalsIgnoreCase("サン")){
                     sendKankeisya("§f§lサンが役に決まりました！");
                     if(plugin.oyayaku == 3){
-                        draw(uuid);
+                        draw(p);
                     }else if(plugin.oyayaku > 3){
-                        vsOya(true,uuid,1.0);
+                        vsOya(true,p,1.0);
                     }else {
-                        vsOya(false,uuid,1.0);
+                        vsOya(false,p,1.0);
                     }
                 }else if(result.equalsIgnoreCase("シ")){
                     sendKankeisya("§f§lシが役に決まりました！");
                     if(plugin.oyayaku == 4){
-                        draw(uuid);
+                        draw(p);
                     }else if(plugin.oyayaku > 4){
-                        vsOya(true,uuid,1.0);
+                        vsOya(true,p,1.0);
                     }else {
-                        vsOya(false,uuid,1.0);
+                        vsOya(false,p,1.0);
                     }
                 }else if(result.equalsIgnoreCase("ゴ")){
                     sendKankeisya("§f§lゴが役に決まりました！");
                     if(plugin.oyayaku == 5){
-                        draw(uuid);
+                        draw(p);
                     }else if(plugin.oyayaku > 5){
-                        vsOya(true,uuid,1.0);
+                        vsOya(true,p,1.0);
                     }else {
-                        vsOya(false,uuid,1.0);
+                        vsOya(false,p,1.0);
                     }
                 }else if(result.equalsIgnoreCase("ロ")){
                     sendKankeisya("§c§lロ (ﾟ∀ﾟ)ｷﾀｺﾚ!!");
                     if(plugin.oyayaku == 6){
-                        draw(uuid);
+                        draw(p);
                     }else if(plugin.oyayaku > 6){
-                        vsOya(true,uuid,1.0);
+                        vsOya(true,p,1.0);
                     }else {
-                        vsOya(false,uuid,1.0);
+                        vsOya(false,p,1.0);
                     }
                 }else if(result.equalsIgnoreCase("man10")){
                     sendKankeisya("§c§lマンジュウ (ﾟ∀ﾟ)ｷﾀｺﾚ!!");
-                    vsOya(false,uuid,2.0);
+                    vsOya(false,p,2.0);
                 }else if(result.equalsIgnoreCase("ゾロメ")){
                     sendKankeisya("§4§lゾロメ ｷﾀ━━━━(ﾟ∀ﾟ)━━━━!!");
-                    vsOya(false,uuid,3.0);
+                    vsOya(false,p,3.0);
                 }else if(result.equalsIgnoreCase("ピンゾロ")){
                     Bukkit.broadcastMessage(plugin.prefix+"§0§l§kaaaaa§4§lJ§6§lA§e§lC§a§lK§2§lP§b§lO§3§lT§0§l§kaaaaa§6§l§n§o ｷﾀ━━━━(ﾟ∀ﾟ)━━━━!!");
                     Bukkit.broadcastMessage(plugin.prefix+"§e§l結果: §a§l子の勝利！！");
@@ -266,24 +272,26 @@ public class MCHData {
                         jack = plugin.bet * 10;
                     }
                     plugin.takeJackpot(jack);
-                    plugin.vault.givePlayerMoney(uuid,jack,TransactionType.WIN,"mcr jackpot!! deposit: "+Bukkit.getPlayer(uuid).getName());
+                    plugin.vault.deposit(p.getPlayer(), jack);
+                    //plugin.vault.givePlayerMoney(uuid,jack,TransactionType.WIN,"mcr jackpot!! deposit: "+Bukkit.getPlayer(uuid).getName());
                     sendTitle("§0§l§kaaaaa§4§lJ§6§lA§e§lC§a§lK§2§lP§b§lO§3§lT§0§l§kaaaaa","§e§l当選者: §f§l"+Bukkit.getPlayer(uuid).getName()+" §6§l当選金額: §f§l"+new JPYBalanceFormat(jack).getString()+"円",100);
-                    plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,plugin.onebet*5,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr jackpot!! deposit: "+Bukkit.getPlayer(uuid).getName());
-                    Bukkit.broadcastMessage(plugin.prefix+"§a§l"+Bukkit.getPlayer(uuid).getDisplayName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5).getString()+"円 → "+new JPYBalanceFormat(plugin.onebet*5 + jack).getString()+"円");
-                    plugin.kolist.remove(uuid);
+                    plugin.vault.deposit(p.getPlayer(), plugin.bet*5);
+                    //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,plugin.onebet*5,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr jackpot!! deposit: "+Bukkit.getPlayer(uuid).getName());
+                    Bukkit.broadcastMessage(plugin.prefix+"§a§l"+p.getDisplayName()+"§f§l: §e§l"+plugin.bet*5+" 円 → "+plugin.bet*5 + jack+" 円");
+                    plugin.kolist.remove(p);
                 }else if(result.equalsIgnoreCase("サイコー")){
                     sendKankeisya("§a§l役無し (ﾟ∀ﾟ)ｷﾀｺﾚ!!");
                     if(plugin.oyayaku == 0){
-                        draw(uuid);
+                        draw(p);
                     }else {
-                        vsOya(true,uuid,1.0);
+                        vsOya(true,p,1.0);
                     }
                 }else if(result.equalsIgnoreCase("オマンコロ")){
                     sendKankeisya("§4§l§nマンコロリン 来ちゃった(∀｀*ゞ)ﾃﾍｯ");
                     gotoJackpot();
                 }else if(result.equalsIgnoreCase("ヒフミ")){
                     sendKankeisya("§a§lﾀﾞｰ!!");
-                    vsOya(false,uuid,2.5);
+                    vsOya(false,p,2.5);
                 }else{
                     Bukkit.broadcastMessage(plugin.prefix+"§4エラー発生。未知の目です。");
                     reset();
@@ -298,13 +306,15 @@ public class MCHData {
         plugin.oyabal = with + plugin.oyabal;
         double retn = (plugin.bet * 5) - (plugin.bet * bairitu) - (plugin.bet/100);
         for(Player p:plugin.kolist){
-            plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,retn,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr lose return: "+Bukkit.getPlayer(uuid).getName());
-            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+p.getName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.bet*5).getString()+"円 → "+new JPYBalanceFormat(retn+(plugin.onebet/100)).getString()+"円§e(うち手数料"+new JPYBalanceFormat((plugin.onebet/100)).getString()+"円)");
+            plugin.vault.deposit(p.getPlayer(), retn);
+            //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,retn,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr lose return: "+Bukkit.getPlayer(uuid).getName());
+            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+p.getName()+"§f§l: §e§l"+plugin.bet*5+" 円 → "+retn+plugin.bet/100+" 円§e(うち手数料"+plugin.bet/100+" 円)");
             plugin.addJackpot(plugin.bet/100);
         }
         plugin.kolist.clear();
-        plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),plugin.parent,plugin.parentbal - (plugin.parentbal/100),TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr parent deposit: "+Bukkit.getPlayer(plugin.parent).getName());
-        Bukkit.broadcastMessage(plugin.prefix+"§a§l"+Bukkit.getPlayer(plugin.parent).getDisplayName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5*plugin.maxplayers).getString()+"円 → "+new JPYBalanceFormat(plugin.parentbal).getString()+"円§e(うち手数料"+new JPYBalanceFormat((plugin.parentbal/100)).getString()+"円)");
+        plugin.vault.deposit(plugin.oya, plugin.oyabal - plugin.oyabal/100);
+        //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),plugin.parent,plugin.parentbal - (plugin.parentbal/100),TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr parent deposit: "+Bukkit.getPlayer(plugin.parent).getName());
+        Bukkit.broadcastMessage(plugin.prefix+"§a§l"+plugin.oya.getDisplayName()+"§f§l: §e§l"+plugin.bet*5*plugin.hito+" 円 → "+plugin.oyabal+" 円§e(うち手数料"+plugin.oyabal/100+" 円)");
         plugin.addJackpot(plugin.oyabal/100);
         reset();
     }
@@ -313,14 +323,16 @@ public class MCHData {
         double with = plugin.bet * bairitu ;
         plugin.oyabal = plugin.oyabal - (with*plugin.hito);
         for(Player p:plugin.kolist){
-            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+p.getName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5).getString()+"円 → "+new JPYBalanceFormat(with + (plugin.onebet * 5)).getString()+"円§e(うち手数料"+new JPYBalanceFormat((plugin.onebet/100)).getString()+"円)");
+            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+p.getName()+"§f§l: §e§l"+ plugin.bet*5 + " 円 → "+ with + (plugin.bet * 5+" 円§e(うち手数料"+ plugin.bet/100+" 円)");
             plugin.addJackpot(plugin.bet/100);
-            plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,with + (plugin.onebet * 5) - (plugin.onebet/100) ,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr win: "+Bukkit.getPlayer(uuid).getName());
+            plugin.vault.deposit(p.getPlayer(), with + (plugin.bet * 5) - (plugin.bet/100));
+            //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,with + (plugin.onebet * 5) - (plugin.onebet/100) ,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr win: "+Bukkit.getPlayer(uuid).getName());
         }
         plugin.kolist.clear();
-        plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),plugin.parent,plugin.parentbal - (plugin.parentbal/100),TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr parent deposit: "+Bukkit.getPlayer(plugin.parent).getName());
-        Bukkit.broadcastMessage(plugin.prefix+"§a§l"+Bukkit.getPlayer(plugin.parent).getDisplayName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5*plugin.maxplayers).getString()+"円 → "+new JPYBalanceFormat(plugin.parentbal).getString()+"円§e(うち手数料"+new JPYBalanceFormat((plugin.parentbal/100)).getString()+"円)");
-        plugin.addJackpot(plugin.parentbal/100);
+        plugin.vault.deposit(plugin.oya, plugin.oyabal - (plugin.oyabal/100));
+        //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),plugin.parent,plugin.parentbal - (plugin.parentbal/100),TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr parent deposit: "+Bukkit.getPlayer(plugin.parent).getName());
+        Bukkit.broadcastMessage(plugin.prefix+"§a§l"+ plugin.oya.getDisplayName() +"§f§l: §e§l"+ plugin.bet*5*plugin.hito+" 円 → "+plugin.oyabal+" 円§e(うち手数料"+plugin.oyabal/100+" 円)");
+        plugin.addJackpot(plugin.oyabal/100);
         reset();
     }
 
@@ -330,14 +342,16 @@ public class MCHData {
             double with = plugin.bet * bairitu;
             plugin.oyabal = plugin.oyabal + with;
             double retn = (plugin.bet * 5) - (plugin.bet * bairitu);
-            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+p.getDisplayName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5).getString()+"円 → "+new JPYBalanceFormat(retn).getString()+"円§e(うち手数料"+new JPYBalanceFormat((plugin.onebet/100)).getString()+"円)");
-            plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,retn - (plugin.onebet/100),TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr lose return: "+Bukkit.getPlayer(uuid).getName());
+            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+p.getDisplayName()+"§f§l: §e§l"+ plugin.bet * 5 +" 円 → "+ retn +" 円§e(うち手数料"+ plugin.bet/100 +" 円)");
+            plugin.vault.deposit(p.getPlayer(), retn - (plugin.bet/100));
+            //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,retn - (plugin.onebet/100),TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr lose return: "+Bukkit.getPlayer(uuid).getName());
             plugin.addJackpot(plugin.bet/100);
         }else{
             Bukkit.broadcastMessage(plugin.prefix+"§e§l結果: §c§l子の勝利！！");
-            double with = plugin.onebet * bairitu;
-            plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,with + (plugin.onebet * 5) - (plugin.onebet/100),TransactionCategory.GAMBLE,TransactionType.WIN,"mcr win: "+Bukkit.getPlayer(uuid).getName());
-            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+Bukkit.getPlayer(uuid).getDisplayName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5).getString()+"円 → "+new JPYBalanceFormat(with + (plugin.onebet * 5)).getString()+"円§e(うち手数料"+new JPYBalanceFormat((plugin.onebet/100)).getString()+"円)");
+            double with = plugin.bet * bairitu;
+            plugin.vault.deposit(p.getPlayer(), with + (plugin.bet * 5) - (plugin.bet/100));
+            //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,with + (plugin.onebet * 5) - (plugin.onebet/100),TransactionCategory.GAMBLE,TransactionType.WIN,"mcr win: "+Bukkit.getPlayer(uuid).getName());
+            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+ p.getDisplayName() +"§f§l: §e§l"+ plugin.bet * 5+" 円 → "+ with + plugin.bet * 5+" 円§e(うち手数料"+ plugin.bet/100 + " 円)");
             plugin.addJackpot(plugin.bet/100);
             plugin.oyabal = plugin.oyabal - (with);
         }
@@ -346,8 +360,9 @@ public class MCHData {
 
     public static void draw(Player p){
         Bukkit.broadcastMessage(plugin.prefix+"§e§l結果: §a§l引き分け！！");
-        Bukkit.broadcastMessage(plugin.prefix+"§c§l"+p.getDisplayName()+"§f§l: §e§l"+new JPYBalanceFormat(plugin.onebet*5).getString()+"円 → "+new JPYBalanceFormat(plugin.onebet*5).getString()+"円");
-        plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,plugin.onebet*5,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr draw: "+Bukkit.getPlayer(uuid).getName());
+        Bukkit.broadcastMessage(plugin.prefix+"§c§l"+p.getDisplayName()+"§f§l: §e§l"+ plugin.bet * 5 +" 円 → "+ plugin.bet * 5+" 円");
+        plugin.vault.deposit(p.getPlayer(), plugin.bet * 5);
+        //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,plugin.onebet*5,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr draw: "+Bukkit.getPlayer(uuid).getName());
         plugin.kolist.remove(p);
     }
 
