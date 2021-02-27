@@ -66,6 +66,7 @@ public final class Manchirorin extends JavaPlugin {
                 p.sendMessage("§a§l/mch new §e§l[金額] [人数]§r: §f§l親としてマンチロを開始します");
                 p.sendMessage("§a§l/mch join §r: §f§l子として開催中のマンチロに参加します");
                 p.sendMessage("§a§l/mch rule §r: §f§lマンチロのルールを表示します");
+                p.sendMessage("§4§lJ§6§lA§e§lC§a§lK§2§lP§b§lO§3§lT§f§l: §e§l"+ getJackpot() +"円");
                 p.sendMessage("§d§lCreated by Mohaimen_Ksr");
                 return true;
             }
