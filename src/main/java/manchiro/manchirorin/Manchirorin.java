@@ -20,11 +20,12 @@ public final class Manchirorin extends JavaPlugin {
     boolean mch = false;
     boolean game = false;
     List<Player> kolist;
-    private VaultManager vault;
+    VaultManager vault;
     String prefix = "§f[§d§lマ§a§lン§f§lチロ§r]";
     double bet;
     int hito;
     double oyabal;
+    Long totalbet;
     double jackpot;
     int oyayaku;
     Player oya;
@@ -55,6 +56,13 @@ public final class Manchirorin extends JavaPlugin {
         if (command.getName().equalsIgnoreCase("mch")) {
             if (args.length == 0) {
                 p.sendMessage("§f==========" + prefix + "§f==========");
+                if(oya == null){
+                    p.sendMessage("§4§l現在マンチロは行われていません");
+                }else {
+                    p.sendMessage("§e§lマンチロが行われています！！ §a§l親: " + oya.getDisplayName());
+                    p.sendMessage("§eベット金額: " + bet + " 円" + " 必要金額: " + bet * 5 + " 円");
+                    p.sendMessage("§a§l募集人数: §e" + hito + "人 §2§l参加人数: §e" + kolist.size() + "人 §e§l合計賭け金: " + totalbet + " 円");
+                }
                 p.sendMessage("§a§l/mch new §e§l[金額] [人数]§r: §f§l親としてマンチロを開始します");
                 p.sendMessage("§a§l/mch join §r: §f§l子として開催中のマンチロに参加します");
                 p.sendMessage("§a§l/mch rule §r: §f§lマンチロのルールを表示します");
