@@ -14,18 +14,20 @@ public class MCHData {
         MCHData.plugin = plugin;
     }
 
-    public static boolean gameStart(Player p, double bet, int hito){
-        if(plugin.oya != null){
+    public static boolean gameStart(Player p, double bet, int hito) {
+        if (plugin.oya != null) {
             return false;
         }
         plugin.hito = hito;
         plugin.bet = bet;
         plugin.oya = p;
         plugin.oyabal = bet * 5 * hito;
-        for(Player player:Bukkit.getOnlinePlayers()){
-            Bukkit.broadcastMessage(plugin.prefix+"§a§l"+player.getDisplayName()+"§f§lさんにより§d§l"+plugin.hito +"§f§l人募集の§e§l"+plugin.bet+"円§f§lマンチロが開始されました！§a§l: /mcr"+"§e参加する(必要: "+ plugin.bet * 5+")" + "/mcr join");
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.sendMessage(plugin.prefix + "§a§l" + plugin.oya.getDisplayName() + "§f§lさんにより§d§l" + plugin.hito + "§f§l人募集の§e§l" + plugin.bet + "円§f§lマンチロが開始されました！§a§l: /mch" + "§e参加する(必要: " + plugin.bet * 5 + ")" + "/mch join");
         }
+        plugin.mch = false;
         plugin.timer.betTime();
+        plugin.game = true;
         return true;
     }
 
@@ -41,8 +43,9 @@ public class MCHData {
         plugin.oyabal = -1;
         plugin.hito = -1;
         plugin.game = false;
-        plugin.vault.giveCountyMoney(plugin.totalBet.getBalance(),TransactionType.FEE,"add jackpot bal");
-        plugin.vault.takeMoneyPoolMoney(plugin.totalBets,plugin.totalBet.getBalance(),TransactionType.FEE,"take jackpot bal");
+        plugin.mch = false;
+        //plugin.vault.giveCountyMoney(plugin.totalBet.getBalance(),TransactionType.FEE,"add jackpot bal");
+        //plugin.vault.takeMoneyPoolMoney(plugin.totalBets,plugin.totalBet.getBalance(),TransactionType.FEE,"take jackpot bal");
         Bukkit.broadcastMessage(plugin.prefix+"§a§lマンチロが終了しました。");
     }
 
@@ -59,14 +62,14 @@ public class MCHData {
     }
 
     public static void gamePush1(){
-        plugin.game = true;
+        plugin.mch = true;
         Bukkit.broadcastMessage(plugin.prefix+"§a§lマンチロがスタートしました！");
         sendKankeisya("§a§l"+plugin.oya.getDisplayName()+"§f§lさん(親)がサイコロを振っています…§e§l§kaaa");
         new BukkitRunnable(){
             @Override
             public void run() {
                 cancel();
-                if(!plugin.game){
+                if(!plugin.mch){
                     return;
                 }
                 Random rnd1 = new Random();
@@ -126,7 +129,7 @@ public class MCHData {
                     plugin.takeJackpot(jack);
                     plugin.vault.deposit(plugin.oya, jack);
                     //plugin.vault.givePlayerMoney(plugin.parent,jack,TransactionType.DEPOSIT,"mcr jackpot!! user: "+Bukkit.getPlayer(plugin.parent).getName());
-                    sendTitle("§0§l§kaaaaa§4§lJ§6§lA§e§lC§a§lK§2§lP§b§lO§3§lT§0§l§kaaaaa","§e§l当選者: §f§l"+Bukkit.getPlayer(plugin.parent).getName()+" §6§l当選金額: §f§l"+new JPYBalanceFormat(jack).getString()+"円",100);
+                    sendTitle("§0§l§kaaaaa§4§lJ§6§lA§e§lC§a§lK§2§lP§b§lO§3§lT§0§l§kaaaaa","§e§l当選者: §f§l"+plugin.oya.getName()+" §6§l当選金額: §f§l"+jack+" 円",100);
                     plugin.vault.deposit(plugin.oya, plugin.oyabal);
                     //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),plugin.parent,plugin.parentbal,TransactionCategory.GAMBLE,TransactionType.WIN,"mcr jackpot!! user: "+Bukkit.getPlayer(plugin.parent).getName());
                     Bukkit.broadcastMessage(plugin.prefix+"§a§l"+plugin.oya.getDisplayName()+"§f§l: §e§l"+plugin.bet*5*plugin.hito+" 円 → "+plugin.oyabal + jack+" 円");
@@ -274,7 +277,7 @@ public class MCHData {
                     plugin.takeJackpot(jack);
                     plugin.vault.deposit(p.getPlayer(), jack);
                     //plugin.vault.givePlayerMoney(uuid,jack,TransactionType.WIN,"mcr jackpot!! deposit: "+Bukkit.getPlayer(uuid).getName());
-                    sendTitle("§0§l§kaaaaa§4§lJ§6§lA§e§lC§a§lK§2§lP§b§lO§3§lT§0§l§kaaaaa","§e§l当選者: §f§l"+Bukkit.getPlayer(uuid).getName()+" §6§l当選金額: §f§l"+new JPYBalanceFormat(jack).getString()+"円",100);
+                    sendTitle("§0§l§kaaaaa§4§lJ§6§lA§e§lC§a§lK§2§lP§b§lO§3§lT§0§l§kaaaaa","§e§l当選者: §f§l"+p.getName()+" §6§l当選金額: §f§l"+jack+" 円",100);
                     plugin.vault.deposit(p.getPlayer(), plugin.bet*5);
                     //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,plugin.onebet*5,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr jackpot!! deposit: "+Bukkit.getPlayer(uuid).getName());
                     Bukkit.broadcastMessage(plugin.prefix+"§a§l"+p.getDisplayName()+"§f§l: §e§l"+plugin.bet*5+" 円 → "+plugin.bet*5 + jack+" 円");
@@ -323,7 +326,7 @@ public class MCHData {
         double with = plugin.bet * bairitu ;
         plugin.oyabal = plugin.oyabal - (with*plugin.hito);
         for(Player p:plugin.kolist){
-            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+p.getName()+"§f§l: §e§l"+ plugin.bet*5 + " 円 → "+ with + (plugin.bet * 5+" 円§e(うち手数料"+ plugin.bet/100+" 円)");
+            Bukkit.broadcastMessage(plugin.prefix+"§c§l"+p.getName()+"§f§l: §e§l"+ plugin.bet*5 + " 円 → "+ with + plugin.bet * 5+" 円§e(うち手数料"+ plugin.bet/100+" 円)");
             plugin.addJackpot(plugin.bet/100);
             plugin.vault.deposit(p.getPlayer(), with + (plugin.bet * 5) - (plugin.bet/100));
             //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,with + (plugin.onebet * 5) - (plugin.onebet/100) ,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr win: "+Bukkit.getPlayer(uuid).getName());

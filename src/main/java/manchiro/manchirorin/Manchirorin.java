@@ -19,13 +19,14 @@ public final class Manchirorin extends JavaPlugin {
 
     boolean mch = false;
     boolean game = false;
+    boolean power = false;
     List<Player> kolist;
     VaultManager vault;
     String prefix = "§f[§d§lマ§a§lン§f§lチロ§r]";
     double bet;
     int hito;
     double oyabal;
-    Long totalbet;
+    double totalbet;
     double jackpot;
     int oyayaku;
     Player oya;
@@ -37,6 +38,8 @@ public final class Manchirorin extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getLogger().info("起動しました");
+        MCHData.loadEnable(this);
+        hantei.loadEnable(this);
         kolist = new ArrayList<>();
         vault = new VaultManager(this);
         timer = new Timer(this);
@@ -52,6 +55,7 @@ public final class Manchirorin extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        totalbet = kolist.size()*bet;
         Player p = (Player) sender;
         if (command.getName().equalsIgnoreCase("mch")) {
             if (args.length == 0) {
@@ -110,12 +114,22 @@ public final class Manchirorin extends JavaPlugin {
                     p.sendMessage(prefix + " §c募集人数は1人以上10人以下で入力してください");
                     return true;
                 }
-                MCHData.gameStart(p,bet,hito);
+                MCHData.gameStart(p, bet, hito);
+                vault.withdraw(p.getPlayer(), bet * 5 * hito);
+                //plugin.vault.transferMoneyPlayerToPool(p.getUniqueId(),plugin.totalBet.getId(),bit*5*max,TransactionCategory.GAMBLE,TransactionType.BET,"mcr start: "+p.getName());
                 return true;
                 //join マンチロのゲームに参加↓
             } if (args[0].equals("join")) {
+                    if (mch) {
+                        p.sendMessage(prefix + " §c現在ゲーム中です");
+                        return true;
+                    }
                     if (!game) {
-                        p.sendMessage(prefix + " 現在マンチロは開催されていません");
+                        p.sendMessage(prefix + " §c現在マンチロは開催されていません");
+                        return true;
+                    }
+                    if (p == oya) {
+                        p.sendMessage(prefix + " §cあなたは親のため参加できません");
                         return true;
                     }
                     if (kolist.contains(p)) {
@@ -129,6 +143,7 @@ public final class Manchirorin extends JavaPlugin {
                     kolist.add(p.getPlayer());
                     Bukkit.broadcastMessage(p.getDisplayName() + "さんがマンチロに参加しました！");
                     if (kolist.size() == hito) {
+                        vault.withdraw(p.getPlayer(), bet * 5);
                         MCHData.gamePush1();
                     }
                     return true;

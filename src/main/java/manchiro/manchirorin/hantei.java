@@ -1,6 +1,9 @@
 package manchiro.manchirorin;
 
 public class hantei {
+    public static void loadEnable(Manchirorin plugin){
+        MCHData.plugin = plugin;
+    }
     public static String mainhantei(int i,int ii,int iii){
         if(i == 1&&i == ii&&i==iii) {
             return "ピンゾロ";
