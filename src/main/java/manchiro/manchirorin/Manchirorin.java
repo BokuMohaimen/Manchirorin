@@ -31,6 +31,7 @@ public final class Manchirorin extends JavaPlugin {
     int oyayaku;
     Player oya;
     Timer timer;
+    String Perm = "manchiro.op";
 
     FileConfiguration config;
 
@@ -72,6 +73,12 @@ public final class Manchirorin extends JavaPlugin {
                 p.sendMessage("§a§l/mch rule §r: §f§lマンチロのルールを表示します");
                 p.sendMessage("§4§lJ§6§lA§e§lC§a§lK§2§lP§b§lO§3§lT§f§l: §e§l"+ getJackpot() +"円");
                 p.sendMessage("§d§lCreated by Mohaimen_Ksr");
+                if (p.hasPermission(Perm)) {
+                    p.sendMessage("§f========== §c§lOP §r§f==========");
+                    p.sendMessage("§c§l/mch cancel : 現在開催しているゲームをキャンセルします");
+                    p.sendMessage("§c§l/mch on : マンチロを使用できるようにします");
+                    p.sendMessage("§c§l/mch off : マンチロを使用できないようにします");
+                }
                 return true;
             }
             if (args[0].equals("rule")) {
@@ -87,12 +94,16 @@ public final class Manchirorin extends JavaPlugin {
             }
             //new マンチロのゲームを開始↓
             if (args[0].equals("new")) {
+                if (!power) {
+                    p.sendMessage(prefix + " §c現在マンチロがストップしています");
+                    return true;
+                }
                 if (args.length != 3) {
-                    p.sendMessage(prefix + " 引数の数が違っています");
+                    p.sendMessage(prefix + " §c引数の数が違っています");
                     return true;
                 }
                 if (game) {
-                    p.sendMessage(prefix + " 現在マンチロが開始されています");
+                    p.sendMessage(prefix + " §c現在マンチロが開始されています");
                     return true;
                 }
                 try {
@@ -104,7 +115,7 @@ public final class Manchirorin extends JavaPlugin {
                 }
                 if (vault.getBalance(p.getUniqueId()) < bet * hito * 5) {
                     if (hito <= 0 || hito >= 11) {
-                        p.sendMessage(prefix + " 募集人数は1人以上10人以下で入力してください");
+                        p.sendMessage(prefix + " §c募集人数は1人以上10人以下で入力してください");
                         return true;
                     }
                     p.sendMessage(prefix + " §c必要金額を持っていません §r必要金額: " + "§r" + bet * 5 * hito + "円");
@@ -120,50 +131,76 @@ public final class Manchirorin extends JavaPlugin {
                 return true;
                 //join マンチロのゲームに参加↓
             } if (args[0].equals("join")) {
-                    if (mch) {
-                        p.sendMessage(prefix + " §c現在ゲーム中です");
-                        return true;
-                    }
-                    if (!game) {
-                        p.sendMessage(prefix + " §c現在マンチロは開催されていません");
-                        return true;
-                    }
-                    if (p == oya) {
-                        p.sendMessage(prefix + " §cあなたは親のため参加できません");
-                        return true;
-                    }
-                    if (kolist.contains(p)) {
-                        p.sendMessage(prefix + " §cあなたは既に参加しています");
-                        return true;
-                    }
-                    if (vault.getBalance(p.getUniqueId()) < bet * 5 ) {
-                        p.sendMessage(prefix + " §c所持金が足りません §r必要金額: " + bet * 5 + "円");
-                        return true;
-                    }
-                    kolist.add(p.getPlayer());
-                    Bukkit.broadcastMessage(p.getDisplayName() + "さんがマンチロに参加しました！");
-                    if (kolist.size() == hito) {
-                        vault.withdraw(p.getPlayer(), bet * 5);
-                        MCHData.gamePush1();
-                    }
+                if (!power) {
+                    p.sendMessage(prefix + " §c現在マンチロがストップしています");
+                }
+                if (mch) {
+                    p.sendMessage(prefix + " §c現在ゲーム中です");
                     return true;
-            } if (args[0].equals("off")) {
-                if (!p.hasPermission("manchiro.op")) {
+                }
+                if (!game) {
+                    p.sendMessage(prefix + " §c現在マンチロは開催されていません");
+                    return true;
+                }
+                if (p == oya) {
+                    p.sendMessage(prefix + " §cあなたは親のため参加できません");
+                    return true;
+                }
+                if (kolist.contains(p)) {
+                    p.sendMessage(prefix + " §cあなたは既に参加しています");
+                    return true;
+                }
+                if (vault.getBalance(p.getUniqueId()) < bet * 5 ) {
+                    p.sendMessage(prefix + " §c所持金が足りません §r必要金額: " + bet * 5 + "円");
+                    return true;
+                }
+                kolist.add(p.getPlayer());
+                Bukkit.broadcastMessage(p.getDisplayName() + "さんがマンチロに参加しました！");
+                if (kolist.size() == hito) {
+                    vault.withdraw(p.getPlayer(), bet * 5);
+                    MCHData.gamePush1();
+                }
+                return true;
+            } if (args[0].equals("cancel")) {
+                if (!p.hasPermission(Perm)) {
                     p.sendMessage(prefix + " §cあなたには権限がありません");
                     return true;
                 }
-                if (mch) {
-                    p.sendMessage(prefix + " オフにしました");
-                    mch = false;
+                if (game) {
+                    p.sendMessage(prefix + " キャンセルしました");
+                    MCHData.cancel();
                     return true;
                 } else {
-                    p.sendMessage(prefix + " 既にオフになっています");
+                    p.sendMessage(prefix + " 既にキャンセルしています");
                     return true;
                 }
-            } else {
-                    p.sendMessage(prefix + " 使い方が間違っています");
-                    p.sendMessage(prefix + " /mch と入力するとコマンド一覧が見れます");
+            } if (args[0].equals("on")) {
+                if (!p.hasPermission(Perm)) {
+                    p.sendMessage(prefix + " §cあなたには権限がありません");
                     return true;
+                }
+                if (!power) {
+                    p.sendMessage(prefix + " マンチロをONにしました");
+                    return true;
+                }
+                p.sendMessage("既にONになっています");
+                return true;
+            } if (args[0].equals("off")) {
+                if (!p.hasPermission(Perm)) {
+                    p.sendMessage(prefix + " §cあなたには権限がありません");
+                    return true;
+                }
+                if (power) {
+                    p.sendMessage(prefix + " マンチロをOFFにしました");
+                    return true;
+                }
+                p.sendMessage("既にOFFになっています");
+                return true;
+            }
+            else {
+                p.sendMessage(prefix + " §c使い方が間違っています");
+                p.sendMessage(prefix + " §c/mch と入力するとコマンド一覧が見れます");
+                return true;
             }
         } return true;
     }
