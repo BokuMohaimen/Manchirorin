@@ -181,6 +181,7 @@ public final class Manchirorin extends JavaPlugin {
                 }
                 if (!power) {
                     p.sendMessage(prefix + " マンチロをONにしました");
+                    power = true;
                     return true;
                 }
                 p.sendMessage("既にONになっています");
@@ -192,6 +193,7 @@ public final class Manchirorin extends JavaPlugin {
                 }
                 if (power) {
                     p.sendMessage(prefix + " マンチロをOFFにしました");
+                    power = false;
                     return true;
                 }
                 p.sendMessage("既にOFFになっています");
