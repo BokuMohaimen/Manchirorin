@@ -3,5 +3,8 @@ version: @version@
 main: manchiro.manchirorin.Manchirorin
 api-version: 1.16
 authors: [Mohaimen_Ksr]
+permissions:
+  manchiro.op:
+    default: op
 commands:
   mch:

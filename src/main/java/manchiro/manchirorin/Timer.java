@@ -37,11 +37,11 @@ public class Timer {
 
                 if (time % 60 == 0&&3600 > time){
                     for(Player p: Bukkit.getOnlinePlayers()){
-                        p.sendMessage(plugin.prefix + "§6募集終了まで残り§e§l" + time/60 + "分" + "§e参加する(必要: "+ (plugin.bet * 5)+")" + "/mch join");
+                        p.sendMessage(plugin.prefix + " §6募集終了まで残り§e§l" + time/60 + "分" + "§e参加する(必要: "+ (plugin.bet * 5)+")" + "/mch join");
                     }
                 }else if ((time % 10 == 0&&60 > time) || time <= 5 ){
                     for(Player p:Bukkit.getOnlinePlayers()){
-                        p.sendMessage(plugin.prefix + "§6募集終了まで残り§e§l" + time + "秒" + "§e参加する(必要: "+ (plugin.bet * 5)+")" + "/mch join");
+                        p.sendMessage(plugin.prefix + " §6募集終了まで残り§e§l" + time + "秒" + "§e参加する(必要: "+ (plugin.bet * 5)+")" + "/mch join");
                     }
                 }
 

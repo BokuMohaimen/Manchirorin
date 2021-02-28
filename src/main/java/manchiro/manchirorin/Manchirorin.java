@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,7 +16,7 @@ import java.util.UUID;
 
 import static jdk.nashorn.internal.runtime.JSType.isNumber;
 
-public final class Manchirorin extends JavaPlugin {
+public final class Manchirorin extends JavaPlugin implements Listener {
 
     boolean mch = false;
     boolean game = false;
@@ -47,6 +48,7 @@ public final class Manchirorin extends JavaPlugin {
         saveDefaultConfig();
         config = getConfig();
         jackpot = config.getDouble("jackpot");
+        Bukkit.getServer().getPluginManager().registerEvents(this,this);
     }
 
     @Override
@@ -87,7 +89,8 @@ public final class Manchirorin extends JavaPlugin {
                 p.sendMessage("§6[出目合計10 man10] [1・2・3 イチ・ニ・サン・ﾀﾞｰ!!] [出目合計5 dan5]");
                 p.sendMessage("§6役一覧: [二つそろって残りが・・ その数字が強さ]");
                 p.sendMessage("");
-                p.sendMessage("§e配当率: 『イチ・ニ・サン・ﾀﾞｰ!!:4倍勝(親のみ)』『ゾロメ:3倍勝』");
+                p.sendMessage("§e配当率: 『サイコー!!:4倍勝(親のみ)』");
+                p.sendMessage("§e配当率: 『イチ・ニ・サン・ﾀﾞｰ!! 2.5倍勝』 『ゾロメ:3倍勝』");
                 p.sendMessage("§e『man10:2倍勝』『dan5:2倍負』 通常:1倍負/勝");
                 p.sendMessage("§ejackpotの払い出し金額: 賭け金x10 or jackpotすべて のどちらか金額が低いほう");
                 return true;
@@ -111,6 +114,10 @@ public final class Manchirorin extends JavaPlugin {
                     hito = Integer.parseInt(args[2]);
                 }catch (NumberFormatException e) {
                     p.sendMessage(prefix + " §c金額と人数は数字で入力してください");
+                    return true;
+                }
+                if (bet < 50000) {
+                    p.sendMessage(prefix + " §c金額は50000円以上で入力してください");
                     return true;
                 }
                 if (vault.getBalance(p.getUniqueId()) < bet * hito * 5) {
