@@ -6,16 +6,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import static jdk.nashorn.internal.runtime.JSType.isNumber;
-
-public final class Manchirorin extends JavaPlugin {
+public final class Manchirorin extends JavaPlugin implements Listener {
 
     boolean mch = false;
     boolean game = false;
