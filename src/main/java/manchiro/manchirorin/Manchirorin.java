@@ -196,8 +196,7 @@ public final class Manchirorin extends JavaPlugin {
                 }
                 p.sendMessage("既にOFFになっています");
                 return true;
-            }
-            else {
+            } else {
                 p.sendMessage(prefix + " §c使い方が間違っています");
                 p.sendMessage(prefix + " §c/mch と入力するとコマンド一覧が見れます");
                 return true;
