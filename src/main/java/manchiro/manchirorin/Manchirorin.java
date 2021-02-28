@@ -19,7 +19,7 @@ public final class Manchirorin extends JavaPlugin {
 
     boolean mch = false;
     boolean game = false;
-    boolean power = false;
+    boolean power = true;
     List<Player> kolist;
     VaultManager vault;
     String prefix = "§f[§d§lマ§a§lン§f§lチロ§r]";
