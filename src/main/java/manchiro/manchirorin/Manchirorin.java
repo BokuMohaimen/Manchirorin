@@ -9,12 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
-import static jdk.nashorn.internal.runtime.JSType.isNumber;
 
 public final class Manchirorin extends JavaPlugin implements Listener {
 
@@ -78,8 +74,10 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                 if (p.hasPermission(Perm)) {
                     p.sendMessage("§f========== §c§lOP §r§f==========");
                     p.sendMessage("§c§l/mch cancel : 現在開催しているゲームをキャンセルします");
-                    p.sendMessage("§c§l/mch on : マンチロを使用できるようにします");
-                    p.sendMessage("§c§l/mch off : マンチロを使用できないようにします");
+                    p.sendMessage("§c§l/mch on/off : マンチロを使用できるようにするかしないか");
+                    p.sendMessage("§c§l/mch reset : 親と子をnullにします");
+                    p.sendMessage("§c§l/mch debug : 親が子としてマンチロに参加します");
+                    p.sendMessage("debugコマンドはかなり不安定・お金が増えるので多用は非推奨");
                 }
                 return true;
             }
@@ -169,8 +167,7 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                 }
                 return true;
             } if (args[0].equals("cancel")) {
-                if (!p.hasPermission(Perm)) {
-                    p.sendMessage(prefix + " §cあなたには権限がありません");
+                if (noPerm(p)) {
                     return true;
                 }
                 if (game) {
@@ -182,8 +179,7 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                     return true;
                 }
             } if (args[0].equals("on")) {
-                if (!p.hasPermission(Perm)) {
-                    p.sendMessage(prefix + " §cあなたには権限がありません");
+                if (noPerm(p)) {
                     return true;
                 }
                 if (!power) {
@@ -194,8 +190,7 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                 p.sendMessage("既にONになっています");
                 return true;
             } if (args[0].equals("off")) {
-                if (!p.hasPermission(Perm)) {
-                    p.sendMessage(prefix + " §cあなたには権限がありません");
+                if (noPerm(p)) {
                     return true;
                 }
                 if (power) {
@@ -205,6 +200,18 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                 }
                 p.sendMessage("既にOFFになっています");
                 return true;
+            } if (args[0].equals("debug")) {
+                if (noPerm(p)) {
+                    return true;
+                }
+                kolist.add(p);
+                Bukkit.broadcastMessage(p.getDisplayName() + "さんがマンチロに参加しました！");
+                MCHData.gamePush1();
+            } if (args[0].equals("reset")) {
+                if (noPerm(p)) {
+                    return true;
+                }
+                MCHData.reset();
             } else {
                 p.sendMessage(prefix + " §c使い方が間違っています");
                 p.sendMessage(prefix + " §c/mch と入力するとコマンド一覧が見れます");
@@ -237,5 +244,11 @@ public final class Manchirorin extends JavaPlugin implements Listener {
         config.set("jackpot",jackpot-d);
         saveConfig();
         jackpot = jackpot - d;
+    }
+    public boolean noPerm(Player p) {
+        if (!p.hasPermission(Perm)) {
+            p.sendMessage(prefix + " §cあなたには権限がありません");
+        }
+        return true;
     }
 }

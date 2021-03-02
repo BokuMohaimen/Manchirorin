@@ -4,9 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import java.util.Random;
-import java.util.UUID;
 
 public class MCHData {
     static Manchirorin plugin;
@@ -285,6 +283,7 @@ public class MCHData {
                     //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),uuid,plugin.onebet*5,TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr jackpot!! deposit: "+Bukkit.getPlayer(uuid).getName());
                     Bukkit.broadcastMessage(plugin.prefix+" §a§l"+p.getDisplayName()+"§f§l: §e§l"+plugin.bet*5+" 円 → "+((plugin.bet*5) + jack)+" 円");
                     plugin.kolist.clear();
+                    reset();
                 }else if(result.equalsIgnoreCase("サイコー")){
                     sendKankeisya(" §a§l役無し (ﾟ∀ﾟ)ｷﾀｺﾚ!!");
                     if(plugin.oyayaku == 0){
