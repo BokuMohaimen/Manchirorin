@@ -107,7 +107,6 @@ public class result {
                 reset();
                 break;
         }
-
     }
 
     public static void checkChildrenBattle(String result, Player p) {
@@ -115,9 +114,16 @@ public class result {
         switch (result) {
 
             case "ナシ":
+                sendKankeisya("§a§l役無し (ﾟ∀ﾟ)ｷﾀｺﾚ!!");
+                if (plugin.oyayaku == 0) {
+                    draw(p);
+                } else {
+                    vsOya(true, p, 1.0);
+                }
+                break;
 
             case "サイコー":
-                sendKankeisya("§a§l役無し (ﾟ∀ﾟ)ｷﾀｺﾚ!!");
+                sendKankeisya("§a§lサイコー(ﾟ∀ﾟ)!!");
                 if (plugin.oyayaku == 0) {
                     draw(p);
                 } else {
@@ -240,7 +246,5 @@ public class result {
                 reset();
                 break;
         }
-
     }
-
 }
