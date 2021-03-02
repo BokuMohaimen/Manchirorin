@@ -115,7 +115,8 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                 try {
                     bet = Double.parseDouble(args[1]);
                     hito = Integer.parseInt(args[2]);
-                }catch (NumberFormatException e) {
+                }
+                catch (NumberFormatException e) {
                     p.sendMessage(prefix + " §c金額と人数は数字で入力してください");
                     return true;
                 }
@@ -177,9 +178,7 @@ public final class Manchirorin extends JavaPlugin implements Listener {
 
             //cancel ゲームの中断 op専用
             if (args[0].equals("cancel")) {
-                if (noPerm(p)) {
-                    return true;
-                }
+                noPerm(p);
                 if (game) {
                     p.sendMessage(prefix + " キャンセルしました");
                     MCHData.cancel();
@@ -192,9 +191,7 @@ public final class Manchirorin extends JavaPlugin implements Listener {
 
             //on マンチロ起動 op専用
             if (args[0].equals("on")) {
-                if (noPerm(p)) {
-                    return true;
-                }
+                noPerm(p);
                 if (!power) {
                     p.sendMessage(prefix + " マンチロをONにしました");
                     power = true;
@@ -206,9 +203,7 @@ public final class Manchirorin extends JavaPlugin implements Listener {
 
             //off マンチロ停止 op専用
             if (args[0].equals("off")) {
-                if (noPerm(p)) {
-                    return true;
-                }
+                noPerm(p);
                 if (power) {
                     p.sendMessage(prefix + " マンチロをOFFにしました");
                     power = false;
@@ -220,9 +215,7 @@ public final class Manchirorin extends JavaPlugin implements Listener {
 
             //debug 親が子としてゲームに参加 op専用 #不安定#
             if (args[0].equals("debug")) {
-                if (noPerm(p)) {
-                    return true;
-                }
+                noPerm(p);
                 kolist.add(p);
                 Bukkit.broadcastMessage(p.getDisplayName() + "さんがマンチロに参加しました！");
                 MCHData.gamePush1();
@@ -230,9 +223,7 @@ public final class Manchirorin extends JavaPlugin implements Listener {
 
             //reset 親と子をnullにする op専用
             if (args[0].equals("reset")) {
-                if (noPerm(p)) {
-                    return true;
-                }
+                noPerm(p);
                 MCHData.reset();
             } else {
                 p.sendMessage(prefix + " §c使い方が間違っています");
