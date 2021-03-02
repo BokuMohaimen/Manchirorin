@@ -20,15 +20,15 @@ public final class Manchirorin extends JavaPlugin implements Listener {
     List<Player> kolist;
     VaultManager vault;
     String prefix = "§f[§d§lマ§a§lン§f§lチロ§r]";
-    double bet;
+    String Perm = "manchiro.op";
     int hito;
+    int oyayaku;
+    double bet;
     double oyabal;
     double totalbet;
     double jackpot;
-    int oyayaku;
     Player oya;
     Timer timer;
-    String Perm = "manchiro.op";
 
     FileConfiguration config;
 
@@ -54,14 +54,17 @@ public final class Manchirorin extends JavaPlugin implements Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
         totalbet = kolist.size()*bet;
         Player p = (Player) sender;
+
         if (command.getName().equalsIgnoreCase("mch")) {
+
             if (args.length == 0) {
                 p.sendMessage("§f==========" + prefix + "§f==========");
                 if(oya == null){
                     p.sendMessage("§4§l現在マンチロは行われていません");
-                }else {
+                } else {
                     p.sendMessage("§e§lマンチロが行われています！！ §a§l親: " + oya.getDisplayName());
                     p.sendMessage("§eベット金額: " + bet + " 円" + " 必要金額: " + bet * 5 + " 円");
                     p.sendMessage("§a§l募集人数: §e" + hito + "人 §2§l参加人数: §e" + kolist.size() + "人 §e§l合計賭け金: " + totalbet + " 円");
@@ -81,6 +84,7 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                 }
                 return true;
             }
+
             if (args[0].equals("rule")) {
                 p.sendMessage("§f==========" + prefix + "§f==========");
                 p.sendMessage("§6役一覧: [1:1:1 jackpotチャンス] [それ以外の三つ揃い ゾロメ]");
@@ -93,6 +97,7 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                 p.sendMessage("§ejackpotの払い出し金額: 賭け金x10 or jackpotすべて のどちらか金額が低いほう");
                 return true;
             }
+
             //new マンチロのゲームを開始↓
             if (args[0].equals("new")) {
                 if (!power) {
@@ -132,12 +137,14 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                 }
                 MCHData.gameStart(p, bet, hito);
                 vault.withdraw(p.getPlayer(), bet * 5 * hito);
-                //plugin.vault.transferMoneyPlayerToPool(p.getUniqueId(),plugin.totalBet.getId(),bit*5*max,TransactionCategory.GAMBLE,TransactionType.BET,"mcr start: "+p.getName());
                 return true;
-                //join マンチロのゲームに参加↓
-            } if (args[0].equals("join")) {
+            }
+
+            //join マンチロのゲームに参加↓
+            if (args[0].equals("join")) {
                 if (!power) {
                     p.sendMessage(prefix + " §c現在マンチロがストップしています");
+                    return true;
                 }
                 if (mch) {
                     p.sendMessage(prefix + " §c現在ゲーム中です");
@@ -166,7 +173,10 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                     MCHData.gamePush1();
                 }
                 return true;
-            } if (args[0].equals("cancel")) {
+            }
+
+            //cancel ゲームの中断 op専用
+            if (args[0].equals("cancel")) {
                 if (noPerm(p)) {
                     return true;
                 }
@@ -178,7 +188,10 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                     p.sendMessage(prefix + " 既にキャンセルしています");
                     return true;
                 }
-            } if (args[0].equals("on")) {
+            }
+
+            //on マンチロ起動 op専用
+            if (args[0].equals("on")) {
                 if (noPerm(p)) {
                     return true;
                 }
@@ -189,7 +202,10 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                 }
                 p.sendMessage("既にONになっています");
                 return true;
-            } if (args[0].equals("off")) {
+            }
+
+            //off マンチロ停止 op専用
+            if (args[0].equals("off")) {
                 if (noPerm(p)) {
                     return true;
                 }
@@ -200,14 +216,20 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                 }
                 p.sendMessage("既にOFFになっています");
                 return true;
-            } if (args[0].equals("debug")) {
+            }
+
+            //debug 親が子としてゲームに参加 op専用 #不安定#
+            if (args[0].equals("debug")) {
                 if (noPerm(p)) {
                     return true;
                 }
                 kolist.add(p);
                 Bukkit.broadcastMessage(p.getDisplayName() + "さんがマンチロに参加しました！");
                 MCHData.gamePush1();
-            } if (args[0].equals("reset")) {
+            }
+
+            //reset 親と子をnullにする op専用
+            if (args[0].equals("reset")) {
                 if (noPerm(p)) {
                     return true;
                 }
@@ -217,9 +239,13 @@ public final class Manchirorin extends JavaPlugin implements Listener {
                 p.sendMessage(prefix + " §c/mch と入力するとコマンド一覧が見れます");
                 return true;
             }
-        } return true;
+        }
+        return true;
     }
+
     @EventHandler
+
+    //サーバーから抜けたときゲームをキャンセル
     public void onQuit(PlayerQuitEvent e){
         Player p = e.getPlayer();
         if(oya == p){
@@ -230,6 +256,8 @@ public final class Manchirorin extends JavaPlugin implements Listener {
             MCHData.cancel();
         }
     }
+
+    //上からジャックポットの値・ジャックポットに追加・ジャックポットから引く
     public double getJackpot(){
         return jackpot;
     }
@@ -245,9 +273,12 @@ public final class Manchirorin extends JavaPlugin implements Listener {
         saveConfig();
         jackpot = jackpot - d;
     }
+
+    //Permissionがないときの処理
     public boolean noPerm(Player p) {
         if (!p.hasPermission(Perm)) {
             p.sendMessage(prefix + " §cあなたには権限がありません");
+            return false;
         }
         return true;
     }
