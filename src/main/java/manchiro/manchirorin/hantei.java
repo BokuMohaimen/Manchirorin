@@ -5,72 +5,86 @@ public class hantei {
         MCHData.plugin = plugin;
     }
     public static String mainhantei(int i,int ii,int iii){
-        if(i == 1&&i == ii&&i==iii) {
-            return "ピンゾロ";
-        }else if(i == 6&&i == ii&&i==iii) {
-            return "オマンコロ";
-        }else if(i == ii&&i==iii) {
+        if (i == ii && ii == iii) {
+            if (i == 1) {
+                return "ピンゾロ";
+            }
+            if (i == 6) {
+                return "オマンコロ";
+            }
             return "ゾロメ";
-        }else if(i == 1&&ii==2&&iii==3){
+        }
+        int i1 = 0;
+        int i2 = 0;
+        int i3 = 0;
+        if (i == 1 || ii == 1 || iii == 1) {
+            i1++;
+        }
+        if (i == 2 || ii == 2 || iii == 2) {
+            i2++;
+        }
+        if (i == 3 || ii == 3 || iii == 3) {
+            i3++;
+        }
+        if (i1 == i && i1 == i2 && i1 == i3) {
             return "ヒフミ";
-        }else if(i == 2&&ii==3&&iii==1){
-            return "ヒフミ";
-        }else if(i == 3&&ii==1&&iii==2){
-            return "ヒフミ";
-        }else if(i == 2&&ii==1&&iii==3){
-            return "ヒフミ";
-        }else if(i == 3&&ii==2&&iii==1){
-            return "ヒフミ";
-        }else if(i == 3&&ii==1&&iii==5) {
+        }
+        if (i == 3 && ii == 1 && iii == 5) {
             return "サイコー";
-        }else if(i+ii+iii==10){
+        }
+        if (i + ii + iii == 10) {
             return "man10";
-        }else if(i+ii+iii==5){
+        }
+        if (i + ii + iii == 5) {
             return "dan5";
-        }else if(i == ii){
-            if(iii==1) {
-                return "イチ";
-            }else if(iii==2) {
-                return "ニ";
-            }else if(iii==3) {
-                return "サン";
-            }else if(iii==4) {
-                return "シ";
-            }else if(iii==5) {
-                return "ゴ";
-            }else if(iii==6) {
-                return "ロ";
+        }
+        if (i == ii) {
+            switch (iii) {
+                case 1:
+                    return "イチ";
+                case 2:
+                    return "ニ";
+                case 3:
+                    return "サン";
+                case 4:
+                    return "シ";
+                case 5:
+                    return "ゴ";
+                case 6:
+                    return "ロ";
             }
-        }else if(i == iii){
-            if(ii==1) {
-                return "イチ";
-            }else if(ii==2) {
-                return "ニ";
-            }else if(ii==3) {
-                return "サン";
-            }else if(ii==4) {
-                return "シ";
-            }else if(ii==5) {
-                return "ゴ";
-            }else if(ii==6) {
-                return "ロ";
+        }
+        if (i == iii) {
+            switch (ii) {
+                case 1:
+                    return "イチ";
+                case 2:
+                    return "ニ";
+                case 3:
+                    return "サン";
+                case 4:
+                    return "シ";
+                case 5:
+                    return "ゴ";
+                case 6:
+                    return "ロ";
             }
-        }else if(ii == iii){
-            if(i==1) {
-                return "イチ";
-            }else if(i==2) {
-                return "ニ";
-            }else if(i==3) {
-                return "サン";
-            }else if(i==4) {
-                return "シ";
-            }else if(i==5) {
-                return "ゴ";
-            }else if(i==6) {
-                return "ロ";
+        }
+        if (ii == iii) {
+            switch (i) {
+                case 1:
+                    return "イチ";
+                case 2:
+                    return "ニ";
+                case 3:
+                    return "サン";
+                case 4:
+                    return "シ";
+                case 5:
+                    return "ゴ";
+                case 6:
+                    return "ロ";
             }
-        }else{
-            return "ナシ";
         }
         return "ナシ";
     }
