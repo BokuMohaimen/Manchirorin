@@ -308,6 +308,7 @@ public class MCHData {
     }
 
     public static void oyaWin(double bairitu){
+        MySQLProcess mysql = new MySQLProcess(plugin.oya, plugin);
         Bukkit.broadcastMessage(plugin.prefix+" §e§l結果: §a§l親の勝利！！");
         double with = plugin.bet * bairitu * plugin.hito;
         plugin.oyabal = with + plugin.oyabal;
@@ -323,9 +324,11 @@ public class MCHData {
         //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),plugin.parent,plugin.parentbal - (plugin.parentbal/100),TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr parent deposit: "+Bukkit.getPlayer(plugin.parent).getName());
         Bukkit.broadcastMessage(plugin.prefix+" §a§l"+plugin.oya.getName()+"§f§l: §e§l"+plugin.bet*5*plugin.hito+" 円 → "+plugin.oyabal+" 円§e(うち手数料"+plugin.oyabal/100+" 円)");
         plugin.addJackpot(plugin.oyabal/100);
+        mysql.run();
         reset();
     }
     public static void oyaLose(double bairitu){
+        MySQLProcess mysql = new MySQLProcess(plugin.oya, plugin);
         Bukkit.broadcastMessage(plugin.prefix+" §e§l結果: §c§l子の勝利！！");
         double with = (plugin.bet * bairitu);
         plugin.oyabal = plugin.oyabal - (with*plugin.hito);
@@ -340,6 +343,7 @@ public class MCHData {
         //plugin.vault.transferMoneyPoolToPlayer(plugin.totalBet.getId(),plugin.parent,plugin.parentbal - (plugin.parentbal/100),TransactionCategory.GAMBLE,TransactionType.DEPOSIT,"mcr parent deposit: "+Bukkit.getPlayer(plugin.parent).getName());
         Bukkit.broadcastMessage(plugin.prefix+" §a§l"+plugin.oya.getName() +"§f§l: §e§l"+ plugin.bet*5*plugin.hito+" 円 → "+plugin.oyabal+" 円§e(うち手数料"+plugin.oyabal/100+" 円)");
         plugin.addJackpot(plugin.oyabal/100);
+        mysql.run();
         reset();
     }
 
@@ -380,13 +384,6 @@ public class MCHData {
         }
     }
 
-    public static void omankoro(String main,String sub,int time){
-        for(Player player : Bukkit.getOnlinePlayers()){
-            player.playSound(player.getLocation(), "SLOT_DQ_ZENMETSU",1,1);
-            player.sendTitle(main,sub,10, time,10);
-        }
-    }
-
     public static void sendKankeisya(String message){
         for(Player p:plugin.kolist){
             p.sendMessage(plugin.prefix+message);
@@ -395,6 +392,7 @@ public class MCHData {
     }
 
     public static void gotoJackpot(){
+        MySQLProcess mysql = new MySQLProcess(plugin.oya, plugin);
         Bukkit.broadcastMessage(plugin.prefix+" §e§l結果: §4§l全 員 敗 北");
         double with = plugin.bet * 5;
         for(Player p:plugin.kolist){
@@ -409,6 +407,7 @@ public class MCHData {
             player.sendTitle("§4§k§laa§r§4§l全 員 敗 北§4§k§laa§r","",20, 200,20);
         }
         plugin.oyabal = 0;
+        mysql.run();
         reset();
     }
 }

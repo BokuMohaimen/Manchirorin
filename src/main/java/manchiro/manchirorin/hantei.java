@@ -1,5 +1,7 @@
 package manchiro.manchirorin;
 
+import org.bukkit.Bukkit;
+
 public class hantei {
     public static void loadEnable(Manchirorin plugin){
         MCHData.plugin = plugin;
@@ -26,7 +28,7 @@ public class hantei {
         if (i == 3 || ii == 3 || iii == 3) {
             i3++;
         }
-        if (i1 == i && i1 == i2 && i1 == i3) {
+        if (i1 == 1 && i1 == i2 && i1 == i3) {
             return "ヒフミ";
         }
         if (i == 3 && ii == 1 && iii == 5) {
