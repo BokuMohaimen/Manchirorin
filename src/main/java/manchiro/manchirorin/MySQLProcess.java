@@ -12,7 +12,7 @@ public class MySQLProcess {
     public void run(){
         String names = "";
         for (Player p : pl.kolist) {
-            names = names+"`"+p.getName();
+            names = p.getName();
         }
         MySQLManager mysql = new MySQLManager(pl, "Manchirorin");
         mysql.execute("INSERT INTO manchiro_log (oya,ko,kakekin) values ('" + pl.oya.getName() + "','" + names + "','" + pl.bet*5 + "');");
