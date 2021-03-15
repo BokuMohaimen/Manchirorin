@@ -29,6 +29,7 @@ public final class Manchirorin extends JavaPlugin implements Listener {
     double jackpot;
     Player oya;
     Timer timer;
+    MySQLManager mysql = new MySQLManager(this,"Manchirorin");
 
     FileConfiguration config;
 
